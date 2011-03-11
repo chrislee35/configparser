@@ -1,6 +1,6 @@
 = configparser
 
-Description goes here.
+parses configuration files compatable with Python's ConfigParser
 
 == Contributing to configparser
  
