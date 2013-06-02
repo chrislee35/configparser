@@ -1,6 +1,6 @@
 # Configparser
 
-parses configuration files compatable with Python's ConfigParser
+Configparser parses configuration files compatible with Python's ConfigParser
 
 ## Installation
 
