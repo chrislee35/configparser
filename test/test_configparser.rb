@@ -42,4 +42,35 @@ myway: or the highway
 		assert_equal('recent hotel',cp['section2']['local2'])
 		assert_equal('un$(resolvable)',cp['section2']['local3'])
 	end
+  
+  def test_parse_from_non_file
+    simple_content = <<end_of_simple
+test1=hi
+test2 = hello
+
+[first_section]
+mytest=55
+yourtest     =     99
+#nothere=notthere
+myboolean
+
+[second section]
+myway=or the
+  highway
+end_of_simple
+ 
+    cp = ConfigParser.new()
+    cp.parse(simple_content.each_line)
+		assert_equal(cp, { 
+      "test1" => "hi",
+      "test2" => "hello", 
+      "first_section" => {
+        "mytest" => "55", 
+        "yourtest" => "99",
+        "myboolean" => true
+		  },
+      "second section" => {
+        "myway" => "or the highway"
+      }})
+  end
 end

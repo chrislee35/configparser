@@ -3,10 +3,14 @@ require "configparser/version"
 # DESCRIPTION: parses configuration files compatible with Python's ConfigParser
 
 class ConfigParser < Hash
-	def initialize(fname)
+	def initialize(fname = nil)
+    self.parse(File.open(fname, "r").each_line) if fname
+  end
+  
+  def parse(input_source)
 		section = nil
 		key = nil
-		File.open(fname,"r").each_line do |line|
+		input_source.each do |line|
 			next if (line =~ /^(#|;)/)
 			
 			# parse out the lines of the config
