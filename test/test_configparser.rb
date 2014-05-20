@@ -43,6 +43,14 @@ myway: or the highway
 		assert_equal('un$(resolvable)',cp['section2']['local3'])
 	end
   
+  def test_parse_a_config_with_indents
+    cp = ConfigParser.new('test/smb.cfg')
+    assert_not_nil(cp)
+    assert_equal("WORKGROUP", cp['global']["workgroup"])
+    assert_equal("%h server (Samba, Ubuntu)", cp['global']["server string"])
+    assert_equal("no", cp['global']["dns proxy"])
+  end
+  
   def test_parse_from_non_file
     simple_content = <<end_of_simple
 test1=hi

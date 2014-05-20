@@ -14,7 +14,7 @@ class ConfigParser < Hash
 			next if (line =~ /^(#|;)/)
 			
 			# parse out the lines of the config
-			if line =~ /^(.+?)\s*[=:]\s*(.+)$/ # handle key=value lines
+			if line =~ /^\s*(.+?)\s*[=:]\s*(.+)$/ # handle key=value lines
 				if section
 					self[section] = {} unless self[section]
 					key = $1
