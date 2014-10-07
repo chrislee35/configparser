@@ -32,6 +32,7 @@ Or install it yourself as:
 		myway=or the
 		  highway
 	
+	require 'configparser'
 	cp = ConfigParser.new('test/simple.cfg')
 	puts cp.to_s
 	
