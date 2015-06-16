@@ -23,7 +23,7 @@ class ConfigParser < Hash
 					key = $1
 					self[key] = $2
 				end
-			elsif line =~ /^\[(.+?)\]/ # handle new sections
+			elsif line =~ /^\s*\[(.+?)\]/ # handle new sections
 				section = $1
 			elsif line =~ /^\s+(.+?)$/ # handle continued lines
 				if section
