@@ -8,10 +8,10 @@ end
 
 require_relative 'helper'
 
-class TestConfigparser < Test::Unit::TestCase
+class TestConfigparser < Minitest::Test
 	def test_parse_a_simple_config
 		cp = ConfigParser.new('test/simple.cfg')
-		assert_not_nil(cp)
+		refute_nil(cp)
 		assert_equal('hi',cp['test1'])
 		assert_equal('hello',cp['test2'])
 		assert_equal('55',cp['first_section']['mytest'])
@@ -36,7 +36,7 @@ myway: or the highway
 	
 	def test_parse_a_config_with_substitutions
 		cp = ConfigParser.new('test/complex.cfg')
-		assert_not_nil(cp)
+		refute_nil(cp)
 		assert_equal('strange-default-whatever',cp['global2'])
 		assert_equal('strange-default-whatever-yodel-local',cp['section1']['local1'])
 		assert_equal('recent hotel',cp['section2']['local2'])
@@ -45,7 +45,7 @@ myway: or the highway
   
   def test_parse_a_config_with_indents
     cp = ConfigParser.new('test/smb.cfg')
-    assert_not_nil(cp)
+    refute_nil(cp)
     assert_equal("WORKGROUP", cp['global']["workgroup"])
     assert_equal("%h server (Samba, Ubuntu)", cp['global']["server string"])
     assert_equal("no", cp['global']["dns proxy"])
@@ -81,4 +81,34 @@ end_of_simple
         "myway" => "or the highway"
       }})
   end
+
+	def test_parse_configparser_example_from_python
+		cp = ConfigParser.new('test/configparser_example.cfg')
+		refute_nil(cp)
+    doc = "[All Values Are Strings]
+are they treated as numbers?: no
+can use the API to get converted values directly: true
+integers, floats and booleans are held as: strings
+or this: 3.14159265359
+values like this: 1000000
+[Multiline Values]
+chorus: I'm a lumberjack, and I'm okay I sleep all night and I work all day
+[No Values]
+key_without_value
+[Sections Can Be Indented]
+can_values_be_as_well: True
+does_that_mean_anything_special: False
+multiline_values: are handled just fine as long as they are indented deeper than the first line of a value
+purpose: formatting for readability
+[Simple Values]
+key: value
+spaces around the delimiter: obviously
+spaces in keys: allowed
+spaces in values: allowed as well
+you can also use: to delimit keys from values
+"
+    
+    assert_equal(doc, cp.to_s)
+	end
+
 end

@@ -11,7 +11,7 @@ class ConfigParser < Hash
 		section = nil
 		key = nil
 		input_source.each do |line|
-			next if (line =~ /^(#|;)/)
+			next if (line =~ /^\s*(#|;)/)
 			
 			# parse out the lines of the config
 			if line =~ /^\s*(.+?)\s*[=:]\s*(.+)$/ # handle key=value lines
@@ -23,7 +23,7 @@ class ConfigParser < Hash
 					key = $1
 					self[key] = $2
 				end
-			elsif line =~ /^\[(.+?)\]/ # handle new sections
+			elsif line =~ /^\s*\[(.+?)\]/ # handle new sections
 				section = $1
 			elsif line =~ /^\s+(.+?)$/ # handle continued lines
 				if section
