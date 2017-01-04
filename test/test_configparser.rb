@@ -31,7 +31,7 @@ yourtest: 99
 [second section]
 myway: or the highway
 "
-		assert_equal(doc,cp.to_s)
+		assert_equal(doc, cp.to_s)
 	end
 	
 	def test_parse_a_config_with_substitutions
@@ -69,7 +69,7 @@ end_of_simple
  
     cp = ConfigParser.new()
     cp.parse(simple_content.each_line)
-		assert_equal(cp, { 
+		assert_equal({ 
       "test1" => "hi",
       "test2" => "hello", 
       "first_section" => {
@@ -79,7 +79,7 @@ end_of_simple
 		  },
       "second section" => {
         "myway" => "or the highway"
-      }})
+      }}, cp)
   end
 
 	def test_parse_configparser_example_from_python
@@ -94,6 +94,7 @@ values like this: 1000000
 [Multiline Values]
 chorus: I'm a lumberjack, and I'm okay I sleep all night and I work all day
 [No Values]
+empty string value here:
 key_without_value
 [Sections Can Be Indented]
 can_values_be_as_well: True
@@ -110,5 +111,18 @@ you can also use: to delimit keys from values
     
     assert_equal(doc, cp.to_s)
 	end
-
+  
+  def test_nil_option
+    nil_content = <<end_of_simple
+[some_section]
+foo=
+end_of_simple
+    cp = ConfigParser.new()
+    cp.parse(nil_content.each_line)
+    assert_equal({ 
+      "some_section" => {
+        "foo" => ""
+      }}, cp)
+    assert_equal(nil_content, cp.to_s("="))
+  end
 end

@@ -14,7 +14,7 @@ class ConfigParser < Hash
 			next if (line =~ /^\s*(#|;)/)
 			
 			# parse out the lines of the config
-			if line =~ /^\s*(.+?)\s*[=:]\s*(.+)$/ # handle key=value lines
+			if line =~ /^\s*(.+?)\s*[=:]\s*(.*)$/ # handle key=value lines
 				if section
 					self[section] = {} unless self[section]
 					key = $1
@@ -74,15 +74,17 @@ class ConfigParser < Hash
 		end
 	end
 	
-	def to_s
+	def to_s(sep=':')
 		str = ""
 		# print globals first
 		self.keys.sort.each do |k|
 			next if self[k].is_a? Hash
 			if self[k] === true
 				str << "#{k}\n"
+      elsif self[k] == ""
+        str << "#{k}#{sep}\n"
 			else
-				str << "#{k}: #{self[k]}\n"
+				str << "#{k}#{sep} #{self[k]}\n"
 			end
 		end
 		
@@ -93,8 +95,10 @@ class ConfigParser < Hash
 			self[k].keys.sort.each do |j|
 				if self[k][j] === true
 					str << "#{j}\n"
+        elsif self[k][j] == ""
+          str << "#{j}#{sep}\n"
 				else
-					str << "#{j}: #{self[k][j]}\n"
+					str << "#{j}#{sep} #{self[k][j]}\n"
 				end
 			end
 		end
