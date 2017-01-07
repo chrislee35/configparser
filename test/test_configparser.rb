@@ -107,6 +107,7 @@ spaces around the delimiter: obviously
 spaces in keys: allowed
 spaces in values: allowed as well
 you can also use: to delimit keys from values
+[You can use comments]
 "
     
     assert_equal(doc, cp.to_s)
@@ -124,5 +125,49 @@ end_of_simple
         "foo" => ""
       }}, cp)
     assert_equal(nil_content, cp.to_s("="))
+  end
+  
+  def test_from_python_cfgparser
+    content = <<end_of_python_example
+[Foo Bar]
+foo=bar
+[Spacey Bar]
+foo = bar
+[Commented Bar]
+foo: bar ; comment
+[Long Line]
+foo: this line is much, much longer than my editor
+   likes it.
+[Section\\with$weird%characters[\t]
+[Internationalized Stuff]
+foo[bg]: Bulgarian
+foo=Default
+foo[en]=English
+foo[de]=Deutsch
+[Spaces]
+key with spaces : value
+another with spaces = splat!
+end_of_python_example
+    cp = ConfigParser.new()
+    cp.parse(content.each_line)
+    doc = "[Commented Bar]
+foo: bar ; comment
+[Foo Bar]
+foo: bar
+[Internationalized Stuff]
+foo: Default
+foo[bg]: Bulgarian
+foo[de]: Deutsch
+foo[en]: English
+[Long Line]
+foo: this line is much, much longer than my editor likes it.
+[Section\\with$weird%characters[\t]
+[Spaces]
+another with spaces: splat!
+key with spaces: value
+[Spacey Bar]
+foo: bar
+"
+    assert_equal(doc, cp.to_s)
   end
 end

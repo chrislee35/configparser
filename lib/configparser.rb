@@ -25,6 +25,7 @@ class ConfigParser < Hash
 				end
 			elsif line =~ /^\s*\[(.+?)\]/ # handle new sections
 				section = $1
+        self[section] = {}
 			elsif line =~ /^\s+(.+?)$/ # handle continued lines
 				if section
 					self[section][key] += " #{$1}";
