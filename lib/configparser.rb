@@ -18,28 +18,56 @@ class ConfigParser < Hash
 				if section
 					self[section] = {} unless self[section]
 					key = $1
-					self[section][key] = $2
+          if self[section][key]
+            self[section][key] = [self[section][key]] unless self[section][key].is_a?(Array)
+            self[section][key] << $2
+          else
+            self[section][key] = $2
+          end
 				else
 					key = $1
-					self[key] = $2
+          if self[key]
+            self[key] = [self[key]] unless self[key].is_a?(Array)
+            self[key] << $2
+          else
+            self[key] = $2
+          end
 				end
 			elsif line =~ /^\s*\[(.+?)\]/ # handle new sections
 				section = $1
-        self[section] = {}
+        self[section] = {} unless self[section]
 			elsif line =~ /^\s+(.+?)$/ # handle continued lines
 				if section
-					self[section][key] += " #{$1}";
+          if self[section][key].is_a?(Array)
+            self[section][key].last << " #{$1}";
+          else
+            self[section][key] << " #{$1}";
+          end
 				else
-					self[key] += " #{$1}"
+          if self[key].is_a?(Array)
+            self[key].last << " #{$1}"
+          else
+            self[key] << " #{$1}"
+          end
 				end
 			elsif line =~ /^([\w\d\_\-]+)$/
 				if section
 					self[section] = {} unless self[section]
 					key = $1
-					self[section][key] = true
+          if self[section][key]
+            self[section][key] = [self[section][key]] unless self[section][key].is_a?(Array)
+            self[section][key] << true
+          else
+            self[section][key] = true
+          end
 				else
 					key = $1
-					self[key] = true
+          if self[key]
+            self[key] = [self[key]] unless self[key].is_a?(Array)
+            self[key] << true
+          else
+            self[key] = true
+          end
 				end
 			end
 		end
@@ -80,27 +108,37 @@ class ConfigParser < Hash
 		# print globals first
 		self.keys.sort.each do |k|
 			next if self[k].is_a? Hash
-			if self[k] === true
-				str << "#{k}\n"
-      elsif self[k] == ""
-        str << "#{k}#{sep}\n"
-			else
-				str << "#{k}#{sep} #{self[k]}\n"
-			end
+      if not self[k].is_a?(Array)
+        self[k] = [self[k]]
+      end
+      self[k].each do |v|
+			  if v === true
+				  str << "#{k}\n"
+        elsif v == ""
+          str << "#{k}#{sep}\n"
+			  else
+				  str << "#{k}#{sep} #{v}\n"
+			  end
+      end
 		end
 		
 		# now print the sections
 		self.keys.sort.each do |k|
-			next unless self[k].is_a? Hash
-			str << "[#{k}]\n"
-			self[k].keys.sort.each do |j|
-				if self[k][j] === true
-					str << "#{j}\n"
-        elsif self[k][j] == ""
-          str << "#{j}#{sep}\n"
-				else
-					str << "#{j}#{sep} #{self[k][j]}\n"
-				end
+      next unless self[k].is_a? Hash
+      str << "[#{k}]\n"
+      self[k].sort.each do |j,v|
+        if not v.is_a?(Array)
+          v = [v]
+        end
+			  v.each do |v2|
+				  if v2 === true
+					  str << "#{j}\n"
+          elsif v2 == ""
+            str << "#{j}#{sep}\n"
+				  else
+				    str << "#{j}#{sep} #{v2}\n"
+				  end
+        end
 			end
 		end
 		str

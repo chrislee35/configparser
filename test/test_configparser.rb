@@ -170,4 +170,42 @@ foo: bar
 "
     assert_equal(doc, cp.to_s)
   end
+  
+  def test_duplicate_sections
+    content = <<end_of_duplicate_section_example
+[test1]
+this=is a test
+[test2]
+pluto=is a dwarf planet
+[test1]
+redundant=am I repeating myself?
+end_of_duplicate_section_example
+    answer = <<end_of_answer
+[test1]
+redundant: am I repeating myself?
+this: is a test
+[test2]
+pluto: is a dwarf planet
+end_of_answer
+    cp = ConfigParser.new()
+    cp.parse(content.each_line)
+    assert_equal(answer, cp.to_s)
+  end
+  
+  def test_duplicate_options
+    content = <<end_of_duplicate_options_example
+[test1]
+this=is a test
+this=is another test
+end_of_duplicate_options_example
+    answer = <<end_of_answer
+[test1]
+this: is a test
+this: is another test
+end_of_answer
+    cp = ConfigParser.new()
+    cp.parse(content.each_line)
+    assert_equal(answer, cp.to_s)
+  end
+
 end
